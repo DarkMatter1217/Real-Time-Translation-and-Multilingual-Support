@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Text Translation Tool</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --background: #f0f2f6;
+            --box-bg: #fff;
+            --border: #d0d3d8;
+            --output-bg: #f0f2f6;
+            --text: #222;
+            --footer-bg: #e9e9ef;
+        }
+        body.dark-mode {
+            --background: #181c23;
+            --box-bg: #222a36;
+            --output-bg: #243146;
+            --text: #f1f1f1;
+            --footer-bg: #232b37;
+        }
+        body {
+            background: var(--background);
+            color: var(--text);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto 0 auto;
+            padding: 2rem;
+            background: var(--box-bg);
+            border-radius: 12px;
+            box-shadow: 0 2px 16px rgba(74,144,226,0.07);
+        }
+        .title {
+            text-align: center;
+            color: var(--primary);
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+        }
+        .row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .row > div {
+            flex: 1;
+        }
+        label {
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+            display: block;
+        }
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            font-size: 1rem;
+            padding: 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            resize: vertical;
+            background: var(--output-bg);
+            color: var(--text);
+        }
+        select, button {
+            width: 100%;
+            padding: 0.7rem;
+            font-size: 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            margin-top: 0.3rem;
+        }
+        button {
+            background: var(--primary);
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #357abd;
+        }
+        .output-box {
+            background: var(--output-bg);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            min-height: 80px;
+            font-size: 1.1rem;
+            color: var(--text);
+            transition: background 0.3s;
+        }
+        .char-count {
+            text-align: right;
+            font-size: 0.95rem;
+            color: #888;
+            margin-top: -0.6rem;
+            margin-bottom: 0.5rem;
+        }
+        .toggle-mode {
+            float: right;
+            margin-top: -2.5rem;
+            margin-right: 0.5rem;
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: var(--primary);
+        }
+        .footer {
+            margin-top: 2.5rem;
+            padding: 1.2rem 0 0.6rem 0;
+            background: var(--footer-bg);
+            text-align: center;
+            color: #888;
+            font-size: 1.05rem;
+            border-top: 1px solid var(--border);
+            border-radius: 0 0 12px 12px;
+        }
+        @media (max-width: 650px) {
+            .container {
+                padding: 1rem;
+            }
+            .title {
+                font-size: 2rem;
+            }
+            .row {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="toggle-mode" title="Toggle light/dark mode" onclick="toggleMode()">🌙</button>
+        <div class="title">Text Translation Tool</div>
+        <label for="source-text">Enter text to translate:</label>
+        <textarea id="source-text" placeholder="Type or paste text here..."></textarea>
+        <div class="char-count" id="char-count">0 / 1000</div>
+        <div class="row">
+            <div>
+                <label for="source-lang">Source Language</label>
+                <select id="source-lang">
+                    <option>English</option>
+                    <option>Spanish</option>
+                    <option>French</option>
+                    <option>German</option>
+                    <option>Hindi</option>
+                    <option>Chinese</option>
+                </select>
+            </div>
+            <div>
+                <label for="target-lang">Target Language</label>
+                <select id="target-lang">
+                    <option>English</option>
+                    <option>Spanish</option>
+                    <option>French</option>
+                    <option>German</option>
+                    <option>Hindi</option>
+                    <option>Chinese</option>
+                </select>
+            </div>
+        </div>
+        <button onclick="translateText()">Translate</button>
+        <div style="margin-top:1.5rem;font-weight:500;">Translated Text:</div>
+        <div class="output-box" id="output-box">(Translation output will appear here.)</div>
+    </div>
+    <div class="footer">
+        Developed with ❤️ using HTML, CSS &amp; JavaScript &mdash; Inspired by Streamlit
+    </div>
+    <script>
+        // Character counter
+        const textarea = document.getElementById('source-text');
+        const charCount = document.getElementById('char-count');
+        textarea.addEventListener('input', function() {
+            charCount.textContent = `${textarea.value.length} / 1000`;
+            if (textarea.value.length > 1000) {
+                textarea.value = textarea.value.slice(0, 1000);
+                charCount.textContent = "1000 / 1000";
+            }
+        });
+
+        // Light/Dark mode toggle
+        function toggleMode() {
+            document.body.classList.toggle('dark-mode');
+            const btn = document.querySelector('.toggle-mode');
+            btn.textContent = document.body.classList.contains('dark-mode') ? "☀️" : "🌙";
+        }
+
+        // Simple translation placeholder
+        async function translateText() {
+            const text = document.getElementById("source-text").value.trim();
+            const sourceLang = document.getElementById("source-lang").value.toLowerCase();
+            const targetLang = document.getElementById("target-lang").value.toLowerCase();
+            const output = document.getElementById("output-box");
+
+            if (!text) {
+                output.textContent = "Please enter some text to translate.";
+                return;
+            }
+            if (sourceLang === targetLang) {
+                output.textContent = "Source and target languages are the same.";
+                return;
+            }
+
+            output.innerHTML = `<em>Translating... (${sourceLang} → ${targetLang})</em>`;
+
+            try {
+                const response = await fetch("/api/translate", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ text, sourceLang, targetLang })
+                });
+
+                const data = await response.json();
+                if (data.translatedText) {
+                    output.innerHTML = `<em>(${sourceLang} → ${targetLang})</em><br><br>` + data.translatedText;
+                } else {
+                    output.textContent = data.error || "Translation failed.";
+                }
+            } catch (err) {
+                output.textContent = "Error: " + err.message;
+            }
+        }
+
+    </script>
+</body>
+</html>
