@@ -1,6 +1,8 @@
 from google import generativeai as genai
-
-genai.configure(api_key="AIzaSyCmWV2AVdKk9AczVV7yJIRhYaYYSODCMGo")
+import dotenv
+dotenv.load_dotenv()
+import os
+genai.configure(api_key=os.getenv("API_KEY"))  
 
 def convert(i, target_language):
     prompt = f"Convert {i} to {target_language}, Only give translation, no other text or explanation."
@@ -14,5 +16,3 @@ def explanation(i, target_language):
     response = model.generate_content(prompt)
     return response.text
 
-print(convert("What is this?", "Hindi"))
-print(explanation("What is this?", "Hindi"))
