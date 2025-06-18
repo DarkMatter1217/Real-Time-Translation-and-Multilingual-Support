@@ -7,12 +7,72 @@ st.set_page_config(page_title="Real-Time Translator", layout="centered")
 
 st.markdown("""
     <style>
-        body { background-color: #1e1e1e; color: #f1f1f1; }
-        .stTextArea textarea, .stSelectbox div, .stButton button, .stMarkdown p {
-            background-color: #2e2e2e; color: white;
+        .main {
+            background-color: #121212;
+            color: #f1f1f1;
+        }
+
+        html, body, [class*="css"] {
+            background-color: #121212;
+            color: #f1f1f1;
+        }
+
+        /* Title */
+        h1 {
+            color: #00f5ff;
+            text-align: center;
+            text-shadow: 0 0 5px #00f5ff, 0 0 10px #00f5ff;
+        }
+
+        /* Text areas */
+        .stTextArea textarea {
+            background-color: #1e1e1e !important;
+            color: #f1f1f1 !important;
+            border: 1px solid #00f5ff !important;
+            border-radius: 8px;
+            box-shadow: 0 0 10px #00f5ff33;
+        }
+
+        /* Select box */
+        .stSelectbox > div {
+            background-color: #1e1e1e !important;
+            color: #f1f1f1 !important;
+            border: 1px solid #ff00ff !important;
+            border-radius: 6px;
+            box-shadow: 0 0 8px #ff00ff33;
+        }
+
+        /* Buttons */
+        .stButton > button {
+            background-color: #9c27b0;
+            color: #ffffff;
+            border-radius: 10px;
+            padding: 0.5em 1em;
+            border: none;
+            font-weight: bold;
+            box-shadow: 0 0 12px #9c27b0, 0 0 6px #9c27b0;
+            transition: 0.3s ease;
+        }
+
+        .stButton > button:hover {
+            background-color: #ba68c8;
+            box-shadow: 0 0 16px #ba68c8, 0 0 10px #ba68c8;
+        }
+
+        /* Copy-to-clipboard feedback */
+        .st-success {
+            color: #00ffcc !important;
+        }
+
+        /* Spinner and alerts */
+        .stSpinner, .stAlert {
+            background-color: #2c2c2c !important;
+            border-left: 5px solid #00f5ff !important;
         }
     </style>
 """, unsafe_allow_html=True)
+
+
 
 st.title("🌍 Real-Time Translator")
 
