@@ -5,72 +5,69 @@ import re
 
 st.set_page_config(page_title="Real-Time Translator", layout="centered")
 
+
 st.markdown("""
-    <style>
-        .main {
-            background-color: #121212;
-            color: #f1f1f1;
-        }
+<style>
+    body {
+      background-color: #e6f7ff;
+      color: #003333;
+    }
 
-        html, body, [class*="css"] {
-            background-color: #121212;
-            color: #f1f1f1;
-        }
+    .main {
+      background-color: #e6f7ff;
+      color: #003333;
+    }
 
-        /* Title */
-        h1 {
-            color: #00f5ff;
-            text-align: center;
-            text-shadow: 0 0 5px #00f5ff, 0 0 10px #00f5ff;
-        }
+    h1 {
+      text-align: center;
+      color: #00664d;
+      font-size: 2.2rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      border-bottom: 3px solid #00b386;
+      padding-bottom: 10px;
+      margin-bottom: 30px;
+    }
 
-        /* Text areas */
-        .stTextArea textarea {
-            background-color: #1e1e1e !important;
-            color: #f1f1f1 !important;
-            border: 1px solid #00f5ff !important;
-            border-radius: 8px;
-            box-shadow: 0 0 10px #00f5ff33;
-        }
+    .stTextArea textarea, .stSelectbox div, .stButton button {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
-        /* Select box */
-        .stSelectbox > div {
-            background-color: #1e1e1e !important;
-            color: #f1f1f1 !important;
-            border: 1px solid #ff00ff !important;
-            border-radius: 6px;
-            box-shadow: 0 0 8px #ff00ff33;
-        }
+    .stTextArea textarea:hover, .stSelectbox div:hover, .stButton button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 8px #00b386;
+    }
 
-        /* Buttons */
-        .stButton > button {
-            background-color: #9c27b0;
-            color: #ffffff;
-            border-radius: 10px;
-            padding: 0.5em 1em;
-            border: none;
-            font-weight: bold;
-            box-shadow: 0 0 12px #9c27b0, 0 0 6px #9c27b0;
-            transition: 0.3s ease;
-        }
+    .stButton>button {
+      font-weight: bold;
+      color: white !important;
+      background-color: #00b386 !important;
+      border: none;
+      border-radius: 8px;
+      transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
-        .stButton > button:hover {
-            background-color: #ba68c8;
-            box-shadow: 0 0 16px #ba68c8, 0 0 10px #ba68c8;
-        }
+    .stButton>button:hover {
+      background-color: #009973 !important;
+      transform: scale(1.05);
+      box-shadow: 0 0 10px #00b386;
+    }
 
-        /* Copy-to-clipboard feedback */
-        .st-success {
-            color: #00ffcc !important;
-        }
+    .theme-toggle {
+      text-align: right;
+      margin-bottom: 10px;
+      color: #004d3d;
+    }
 
-        /* Spinner and alerts */
-        .stSpinner, .stAlert {
-            background-color: #2c2c2c !important;
-            border-left: 5px solid #00f5ff !important;
-        }
-    </style>
+    .footer {
+      margin-top: 30px;
+      font-size: 0.85rem;
+      text-align: center;
+      color: #4d6666;
+    }
+</style>
 """, unsafe_allow_html=True)
+
 
 
 
