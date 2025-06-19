@@ -9,9 +9,9 @@ dark_mode = st.sidebar.checkbox("Enable Dark Theme")
 
 st.markdown(f"""
 <style>
-    body, .main {{
-        background-color: {"#0e0e0e" if dark_mode else "#e6f7ff"};
-        color: {"#ccffcc" if dark_mode else "#003333"};
+    html, body, .main, [data-testid="stAppViewContainer"] {{
+        background-color: {"#0e0e0e" if dark_mode else "#e6f7ff"} !important;
+        color: {"#ccffcc" if dark_mode else "#003333"} !important;
         transition: background-color 0.5s ease, color 0.5s ease;
     }}
 
@@ -77,11 +77,36 @@ st.markdown(f"""
         margin-top: 20px;
         color: {"#88ffcc" if dark_mode else "#4d6666"};
     }}
+
+    /* Dropdown menu popup */
+    [data-baseweb="popover"] {{
+        background-color: {"#1a1a1a" if dark_mode else "#ffffff"} !important;
+        color: {"#d9ffd9" if dark_mode else "#003333"} !important;
+        border: 1px solid {"#00cc66" if dark_mode else "#00b386"} !important;
+        border-radius: 8px;
+    }}
+
+    [data-baseweb="popover"] div[role="option"] {{
+        background-color: {"#1a1a1a" if dark_mode else "#ffffff"} !important;
+        color: {"#d9ffd9" if dark_mode else "#003333"} !important;
+    }}
+
+    [data-baseweb="popover"] div[role="option"]:hover {{
+        background-color: {"#005c3b" if dark_mode else "#e0f5f0"} !important;
+    }}
+
+    /* Label fix */
+    label, .stSelectbox label {{
+        color: {"#d9ffd9" if dark_mode else "#003333"} !important;
+        font-weight: 600;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
+# Title
 st.markdown("<h1>🌍 Real-Time Translator</h1>", unsafe_allow_html=True)
 
+# Languages
 language_dict = {
     'English': 'en', 'Spanish': 'es', 'French': 'fr', 'German': 'de', 'Hindi': 'hi',
     'Chinese (Simplified)': 'zh-cn', 'Chinese (Traditional)': 'zh-tw', 'Japanese': 'ja',
@@ -104,9 +129,9 @@ if st.button("Translate"):
         with st.spinner("Translating with auto-detection..."):
             try:
                 if mode == "Just Translate":
-                    translated_text = Trans(text_input, target_lang_name)
+                    translated_text = Trans(text_input, target_lang)
                 else:
-                    translated_text = Explain(text_input, target_lang_name)
+                    translated_text = Explain(text_input, target_lang)
                 st.success("Translation Complete")
             except Exception as e:
                 st.error(f"Translation failed: {str(e)}")
