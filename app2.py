@@ -4,73 +4,124 @@ from Translator import convert as Trans, explanation as Explain
 import re
 
 st.set_page_config(page_title="Real-Time Translator", layout="centered")
-
 st.markdown("""
     <style>
-        .main {
-            background-color: #121212;
-            color: #f1f1f1;
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Poppins:wght@300;500;700&display=swap');
+
+        /* Background Animation */
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #1a1a2e);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: white;
         }
 
-        html, body, [class*="css"] {
-            background-color: #121212;
-            color: #f1f1f1;
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Main container */
+        .main {
+            padding: 2rem;
         }
 
         /* Title */
         h1 {
-            color: #00f5ff;
+            font-family: 'Orbitron', sans-serif;
             text-align: center;
-            text-shadow: 0 0 5px #00f5ff, 0 0 10px #00f5ff;
+            font-size: 3em;
+            color: #00ffe1;
+            text-shadow: 0 0 10px #00ffe1, 0 0 20px #00ffe1;
+            animation: fadeInDown 1s ease-out;
         }
 
-        /* Text areas */
+        /* Input Areas */
         .stTextArea textarea {
-            background-color: #1e1e1e !important;
-            color: #f1f1f1 !important;
-            border: 1px solid #00f5ff !important;
-            border-radius: 8px;
-            box-shadow: 0 0 10px #00f5ff33;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid #00ffe1;
+            border-radius: 12px;
+            color: #ffffff;
+            padding: 1rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+            font-size: 1rem;
+            animation: fadeIn 1.2s ease-in-out;
         }
 
-        /* Select box */
+        /* Select boxes */
         .stSelectbox > div {
-            background-color: #1e1e1e !important;
-            color: #f1f1f1 !important;
-            border: 1px solid #ff00ff !important;
-            border-radius: 6px;
-            box-shadow: 0 0 8px #ff00ff33;
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 10px;
+            border: 2px solid #ff00ff;
+            color: white;
+            box-shadow: 0 0 10px #ff00ff33;
+            animation: fadeIn 1.2s ease-in-out;
         }
 
         /* Buttons */
         .stButton > button {
-            background-color: #9c27b0;
-            color: #ffffff;
-            border-radius: 10px;
-            padding: 0.5em 1em;
+            background: linear-gradient(90deg, #ff416c, #ff4b2b);
+            color: white;
             border: none;
-            font-weight: bold;
-            box-shadow: 0 0 12px #9c27b0, 0 0 6px #9c27b0;
-            transition: 0.3s ease;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            box-shadow: 0 0 20px #ff416c88;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            animation: fadeIn 1.2s ease-in-out;
         }
 
         .stButton > button:hover {
-            background-color: #ba68c8;
-            box-shadow: 0 0 16px #ba68c8, 0 0 10px #ba68c8;
+            background: linear-gradient(90deg, #ff4b2b, #ff416c);
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #ff416caa;
         }
 
-        /* Copy-to-clipboard feedback */
+        /* Messages */
         .st-success {
             color: #00ffcc !important;
+            font-weight: bold;
         }
 
-        /* Spinner and alerts */
-        .stSpinner, .stAlert {
-            background-color: #2c2c2c !important;
-            border-left: 5px solid #00f5ff !important;
+        .stAlert, .stSpinner {
+            background-color: rgba(0, 0, 0, 0.5) !important;
+            border-left: 5px solid #00ffe1;
+        }
+
+        textarea[readonly] {
+            background-color: rgba(255, 255, 255, 0.08) !important;
+            border: 1px dashed #00ffcc;
+            border-radius: 10px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            0% { opacity: 0; transform: translateY(-30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #888;
+            font-style: italic;
         }
     </style>
 """, unsafe_allow_html=True)
+
 
 
 
@@ -104,7 +155,6 @@ text_input = st.text_area("Enter text", max_chars=1000, height=150)
 mode = st.selectbox("Select Mode", ["Just Translate", "Detailed Explanation"])
 
 target_lang_name = st.selectbox("Translate To", list(language_dict.keys()), index=0)
-target_lang = target_lang_name  
 
 translated_text = ""
 
@@ -115,9 +165,9 @@ if st.button("Translate"):
         with st.spinner("Translating with auto-detection..."):
             try:
                 if mode == "Just Translate":
-                    translated_text = Trans(text_input, target_lang)
+                    translated_text = Trans(text_input, target_lang_name)
                 else:
-                    translated_text = Explain(text_input, target_lang)
+                    translated_text = Explain(text_input, target_lang_name)
                 st.success("Translation Complete")
             except Exception as e:
                 st.error(f"Translation failed: {str(e)}")
