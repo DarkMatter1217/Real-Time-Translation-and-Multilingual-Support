@@ -5,69 +5,82 @@ import re
 
 st.set_page_config(page_title="Real-Time Translator", layout="centered")
 
+# Toggle for theme (Streamlit native, not HTML checkbox)
+dark_mode = st.sidebar.checkbox("🌙 Enable Dark Theme")
 
-st.markdown("""
-<style>
-    body {
-      background-color: #e6f7ff;
-      color: #003333;
+# Inject light or dark theme CSS
+if dark_mode:
+    st.markdown("""
+    <style>
+    body, .main {
+        background-color: #0e0e0e;
+        color: #ccffcc;
     }
-
-    .main {
-      background-color: #e6f7ff;
-      color: #003333;
-    }
-
-    h1 {
-      text-align: center;
-      color: #00664d;
-      font-size: 2.2rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      border-bottom: 3px solid #00b386;
-      padding-bottom: 10px;
-      margin-bottom: 30px;
-    }
-
     .stTextArea textarea, .stSelectbox div, .stButton button {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: #1a1a1a !important;
+        color: #d9ffd9 !important;
+        border: 1px solid #005c3b !important;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-
-    .stTextArea textarea:hover, .stSelectbox div:hover, .stButton button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 8px #00b386;
+    .stTextArea textarea:hover,
+    .stSelectbox div:hover,
+    .stButton button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 8px #00b386;
     }
-
-    .stButton>button {
-      font-weight: bold;
-      color: white !important;
-      background-color: #00b386 !important;
-      border: none;
-      border-radius: 8px;
-      transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    .stButton > button {
+        background-color: #00cc66 !important;
+        color: white !important;
+        border-radius: 8px;
+        font-weight: bold;
     }
-
-    .stButton>button:hover {
-      background-color: #009973 !important;
-      transform: scale(1.05);
-      box-shadow: 0 0 10px #00b386;
+    .stButton > button:hover {
+        background-color: #00994d !important;
+        box-shadow: 0 0 10px #00b386;
+        transform: scale(1.05);
     }
-
-    .theme-toggle {
-      text-align: right;
-      margin-bottom: 10px;
-      color: #004d3d;
+    </style>
+    """, unsafe_allow_html=True)
+else:
+    st.markdown("""
+    <style>
+    body, .main {
+        background-color: #e6f7ff;
+        color: #003333;
     }
-
-    .footer {
-      margin-top: 30px;
-      font-size: 0.85rem;
-      text-align: center;
-      color: #4d6666;
+    .stTextArea textarea, .stSelectbox div, .stButton button {
+        background-color: #f2fefd !important;
+        color: #003333 !important;
+        border: 1px solid #00b386 !important;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-</style>
-""", unsafe_allow_html=True)
+    .stTextArea textarea:hover,
+    .stSelectbox div:hover,
+    .stButton button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 8px #00b386;
+    }
+    .stButton > button {
+        background-color: #00b386 !important;
+        color: white !important;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+    .stButton > button:hover {
+        background-color: #009973 !important;
+        box-shadow: 0 0 10px #00b386;
+        transform: scale(1.05);
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
+# App Content
+st.title("🌍 Real-Time Translator")
+st.text_area("Enter text")
+st.selectbox("Select Mode", ["Just Translate", "Detailed Explanation"])
+st.selectbox("Translate To", ["English", "Hindi", "Spanish", "French", "Chinese"])
+st.button("Translate")
+st.text_area("Translation Output", height=150)
 
 
 
