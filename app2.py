@@ -4,157 +4,96 @@ from Translator import convert as Trans, explanation as Explain
 import re
 
 st.set_page_config(page_title="Real-Time Translator", layout="centered")
-st.markdown("""
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Poppins:wght@300;500;700&display=swap');
 
-        /* Background Animation */
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #1a1a2e);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            color: white;
-        }
+dark_mode = st.sidebar.checkbox("Enable Dark Theme")
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+st.markdown(f"""
+<style>
+    body, .main {{
+        background-color: {"#0e0e0e" if dark_mode else "#e6f7ff"};
+        color: {"#ccffcc" if dark_mode else "#003333"};
+        transition: background-color 0.5s ease, color 0.5s ease;
+    }}
 
-        /* Main container */
-        .main {
-            padding: 2rem;
-        }
+    h1 {{
+        text-align: center;
+        color: {"#66ffcc" if dark_mode else "#00664d"};
+        font-size: 2.5rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        border-bottom: 3px solid {"#00cc66" if dark_mode else "#00b386"};
+        padding-bottom: 10px;
+        margin-bottom: 30px;
+        text-shadow: 0 0 8px {"#00ff88" if dark_mode else "transparent"};
+    }}
 
-        /* Title */
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            text-align: center;
-            font-size: 3em;
-            color: #00ffe1;
-            text-shadow: 0 0 10px #00ffe1, 0 0 20px #00ffe1;
-            animation: fadeInDown 1s ease-out;
-        }
+    .stTextArea textarea {{
+        width: 100%;
+        font-size: 1rem;
+        padding: 12px;
+        border-radius: 8px;
+        background-color: {"#1a1a1a" if dark_mode else "#f2fefd"} !important;
+        color: {"#d9ffd9" if dark_mode else "#003333"} !important;
+        border: 1px solid {"#00cc66" if dark_mode else "#00b386"};
+        transition: all 0.3s ease;
+    }}
 
-        /* Input Areas */
-        .stTextArea textarea {
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid #00ffe1;
-            border-radius: 12px;
-            color: #ffffff;
-            padding: 1rem;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(8px);
-            font-size: 1rem;
-            animation: fadeIn 1.2s ease-in-out;
-        }
+    .stTextArea textarea:hover {{
+        transform: scale(1.05);
+        box-shadow: 0 0 8px {"#00ff88" if dark_mode else "#00b386"};
+    }}
 
-        /* Select boxes */
-        .stSelectbox > div {
-            background: rgba(255, 255, 255, 0.07);
-            border-radius: 10px;
-            border: 2px solid #ff00ff;
-            color: white;
-            box-shadow: 0 0 10px #ff00ff33;
-            animation: fadeIn 1.2s ease-in-out;
-        }
+    .stSelectbox > div[data-baseweb="select"] {{
+        background-color: {"#1a1a1a" if dark_mode else "#f2fefd"} !important;
+        color: {"#d9ffd9" if dark_mode else "#003333"} !important;
+        border: 1px solid {"#00cc66" if dark_mode else "#00b386"} !important;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }}
 
-        /* Buttons */
-        .stButton > button {
-            background: linear-gradient(90deg, #ff416c, #ff4b2b);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 10px 20px;
-            font-size: 1rem;
-            font-weight: 600;
-            box-shadow: 0 0 20px #ff416c88;
-            cursor: pointer;
-            transition: all 0.3s ease-in-out;
-            animation: fadeIn 1.2s ease-in-out;
-        }
+    .stSelectbox > div[data-baseweb="select"]:hover {{
+        transform: scale(1.05);
+        box-shadow: 0 0 8px {"#00ff88" if dark_mode else "#00b386"};
+    }}
 
-        .stButton > button:hover {
-            background: linear-gradient(90deg, #ff4b2b, #ff416c);
-            transform: scale(1.05);
-            box-shadow: 0 0 25px #ff416caa;
-        }
+    .stButton > button {{
+        background-color: {"#00cc66" if dark_mode else "#00b386"} !important;
+        color: white !important;
+        font-weight: bold;
+        border-radius: 8px;
+        padding: 12px;
+        transition: all 0.3s ease;
+    }}
 
-        /* Messages */
-        .st-success {
-            color: #00ffcc !important;
-            font-weight: bold;
-        }
+    .stButton > button:hover {{
+        background-color: {"#00994d" if dark_mode else "#009973"} !important;
+        transform: scale(1.05);
+        box-shadow: 0 0 10px {"#00ff88" if dark_mode else "#00b386"};
+    }}
 
-        .stAlert, .stSpinner {
-            background-color: rgba(0, 0, 0, 0.5) !important;
-            border-left: 5px solid #00ffe1;
-        }
-
-        textarea[readonly] {
-            background-color: rgba(255, 255, 255, 0.08) !important;
-            border: 1px dashed #00ffcc;
-            border-radius: 10px;
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInDown {
-            0% { opacity: 0; transform: translateY(-30px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Footer */
-        .footer {
-            margin-top: 2rem;
-            text-align: center;
-            font-size: 0.8rem;
-            color: #888;
-            font-style: italic;
-        }
-    </style>
+    .footer {{
+        text-align: center;
+        font-size: 0.9rem;
+        margin-top: 20px;
+        color: {"#88ffcc" if dark_mode else "#4d6666"};
+    }}
+</style>
 """, unsafe_allow_html=True)
 
-
-
-
-st.title("🌍 Real-Time Translator")
+st.markdown("<h1>🌍 Real-Time Translator</h1>", unsafe_allow_html=True)
 
 language_dict = {
-    'English': 'en',
-    'Spanish': 'es',
-    'French': 'fr',
-    'German': 'de',
-    'Hindi': 'hi',
-    'Chinese (Simplified)': 'zh-cn',
-    'Chinese (Traditional)': 'zh-tw',
-    'Japanese': 'ja',
-    'Korean': 'ko',
-    'Arabic': 'ar',
-    'Russian': 'ru',
-    'Italian': 'it',
-    'Portuguese': 'pt',
-    'Bengali': 'bn',
-    'Urdu': 'ur',
-    'Turkish': 'tr',
-    'Tamil': 'ta',
-    'Telugu': 'te',
-    'Gujarati': 'gu',
-    'Punjabi': 'pa'
+    'English': 'en', 'Spanish': 'es', 'French': 'fr', 'German': 'de', 'Hindi': 'hi',
+    'Chinese (Simplified)': 'zh-cn', 'Chinese (Traditional)': 'zh-tw', 'Japanese': 'ja',
+    'Korean': 'ko', 'Arabic': 'ar', 'Russian': 'ru', 'Italian': 'it', 'Portuguese': 'pt',
+    'Bengali': 'bn', 'Urdu': 'ur', 'Turkish': 'tr', 'Tamil': 'ta', 'Telugu': 'te',
+    'Gujarati': 'gu', 'Punjabi': 'pa'
 }
 
 text_input = st.text_area("Enter text", max_chars=1000, height=150)
-
 mode = st.selectbox("Select Mode", ["Just Translate", "Detailed Explanation"])
-
 target_lang_name = st.selectbox("Translate To", list(language_dict.keys()), index=0)
+target_lang = language_dict[target_lang_name]
 
 translated_text = ""
 
@@ -172,12 +111,10 @@ if st.button("Translate"):
             except Exception as e:
                 st.error(f"Translation failed: {str(e)}")
 
-
 if translated_text:
     clean_text = re.sub(r'\*\*(.*?)\*\*', r'\1', translated_text)
-    clean_text = re.sub(r'\*(.*?)\*', r'\1', clean_text)           
-    clean_text = clean_text.replace('\n\n', '\n')                  
-    clean_text = clean_text.strip()
+    clean_text = re.sub(r'\*(.*?)\*', r'\1', clean_text)
+    clean_text = clean_text.replace('\n\n', '\n').strip()
 
     st.text_area("Translation Output", value=clean_text, height=250, key="output")
     if st.button("📋 Copy to Clipboard"):
