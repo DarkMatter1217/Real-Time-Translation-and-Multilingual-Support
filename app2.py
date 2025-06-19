@@ -129,9 +129,9 @@ if st.button("Translate"):
         with st.spinner("Translating with auto-detection..."):
             try:
                 if mode == "Just Translate":
-                    translated_text = Trans(text_input, target_lang)
+                    translated_text = Trans(text_input, target_lang_name)
                 else:
-                    translated_text = Explain(text_input, target_lang)
+                    translated_text = Explain(text_input, target_lang_name)
                 st.success("Translation Complete")
             except Exception as e:
                 st.error(f"Translation failed: {str(e)}")

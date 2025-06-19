@@ -5,13 +5,13 @@ import os
 genai.configure(api_key=os.getenv("API_KEY"))  
 
 def convert(i, target_language):
-    prompt = f"Convert {i} to {target_language}, Only give translation, no other text or explanation."
+    prompt = f"Translate {i} to {target_language} return only the best matching translation without any additional information"
     model = genai.GenerativeModel("gemini-2.0-flash")  
     response = model.generate_content(prompt)
     return response.text
 
 def explanation(i, target_language):
-    prompt = f"""Convert {i} to {target_language}. First give translation in bold, then explain the thought process of conversion in detail."""
+    prompt = f"""Translate {i} to {target_language} also explain the translation step by step """
     model = genai.GenerativeModel("gemini-2.0-flash")
     response = model.generate_content(prompt)
     return response.text
