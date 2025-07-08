@@ -1,68 +1,130 @@
 ﻿# Real-Time-Translation-and-Multilingual-Support
 ## https://translator001.streamlit.app/
 
-A Streamlit-based application that provides on-the-fly translation of user content and supports multilingual interactions across various input formats.
+A dual-interface translation application offering:
+
+* **Flask Web UI** using `googletrans` for instant text translation via a minimal HTML/JavaScript frontend.
+* **Streamlit App** leveraging Google’s Gemini API (`google-generativeai`) for advanced translation and step-by-step explanations.
 
 ---
 
-## 🚀 Features
+## 🗂 Repository Structure
 
-* **Live Translation**: Translates text, documents, or chat messages in real time between any two supported languages.
-* **Multilingual Chat Interface**: Users can converse in their native language; the app automatically translates both sides of the conversation.
-* **Document Translation**: Upload files (PDF, DOCX, TXT) to translate entire documents preserving basic formatting.
-* **Speech-to-Text & Text-to-Speech**: Record voice input for translation and listen to translated output via TTS.
-* **Language Detection**: Automatically identifies the source language to streamline user experience.
-* **Customizable Output**: Choose formal or informal tone and specify regional dialects (e.g., en-US vs. en-GB).
-
----
-
-## 📦 Tech Stack
-
-* **Framework**: Streamlit for rapid development of the web UI and layout.
-* **LLM Orchestration**: LangChain to manage prompt flows for translation tasks.
-* **Translation API**: Google Translate API (via `google-cloud-translate`) and/or OpenAI’s translation endpoints.
-* **Speech Processing**: `speechrecognition` for STT, `gTTS` for TTS playback.
-* **Document Parsing**: PyPDF2 & python-docx for extracting text from uploaded files.
-* **Embeddings & Caching**: sentence-transformers for semantic caching of previously translated segments backed by FAISS.
-* **Storage**: SQLite with SQLAlchemy to log user sessions, translation history, and preferences.
-* **Environment**: python-dotenv & Streamlit `secrets.toml` for API keys and config.
-* **Utilities**: pandas & NumPy for data manipulation; python-dateutil for timestamp normalization.
-
----
-
-## 💡 Architecture Overview
-
-1. **User Input**: Text, document, or voice input is captured in the Streamlit interface.
-2. **Language Detection**: Source language auto-detected; user can override if desired.
-3. **Preprocessing**: Text extracted (from files or speech) and chunked for translation.
-4. **Translation Chain**: LangChain routes chunks to the selected translation API with user-specified tone.
-5. **Postprocessing**: Chunks reassembled; formatting from original document is preserved as much as possible.
-6. **TTS Output**: If enabled, translated text is converted to speech for playback.
-7. **Caching**: Previously translated segments stored as embeddings and retrieved via FAISS to reduce API calls.
-8. **Persistence**: All sessions, translations, and user preferences are stored in SQLite for later review.
-
----
-
-## ⚙️ Installation
-
-```bash
-# Clone the repo
-git clone https://github.com/DarkMatter1217/Real-Time-Translation-and-Multilingual-Support.git
-cd Real-Time-Translation-and-Multilingual-Support
-
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate    # Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
+```
+├── app.py                # Flask backend serving translation UI
+├── Translator.py         # Wrapper around Google Generative AI for Streamlit app
+├── app2.py               # Streamlit frontend for real-time translation & explanations
+├── templates/            # HTML templates for Flask app
+│   └── translation.html
+├── requirements.txt      # Python dependencies
+├── .env                  # Environment variables (API_KEY)
+└── README.md             # This file
 ```
 
-## 🔑 Configuration
+---
 
-1. Create a `.env` file at project root:
+## ⚡️ Key Features
 
-   ```ini
+1. **Flask Translation UI** (`app.py` + `templates/translation.html`)
+
+   * Simple HTML interface to enter text and select source/target languages.
+   * Uses `googletrans` (community edition) for free, offline language translation.
+   * AJAX-based POST to `/api/translate` with JSON responses.
+
+2. **Streamlit Translator** (`app2.py` + `Translator.py`)
+
+   * Sidebar toggle for light/dark themes.
+   * Two modes: **Just Translate** and **Detailed Explanation**.
+   * Supports 20+ languages via `Translator.convert` and `Translator.explanation`.
+   * Auto language detection and seamless copy-to-clipboard functionality.
+
+---
+
+## 🛠️ Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/DarkMatter1217/Real-Time-Translation-and-Multilingual-Support.git
+   cd Real-Time-Translation-and-Multilingual-Support
+   ```
+
+2. **Create & activate virtual environment**
+
+   ```bash
+   python3 -m venv venv
+   # macOS/Linux
+   source venv/bin/activate
+   # Windows
+   venv\Scripts\activate
+   ```
+
+3. **Install dependencies**
+
+   ```bash
+   pip install --upgrade pip
+   pip install -r requirements.txt
+   ```
+
+4. **Configure environment variables**
+
+   * Create a `.env` file in the project root:
+
+     ```ini
+     API_KEY=<your_google_api_key>
+     ```
+   * This key is used by `Translator.py` for Gemini-based translation/explanation.
+
+---
+
+## 🏃‍♂️ Running the Apps
+
+### 1. Flask Web UI
+
+```bash
+# Start Flask server
+env FLASK_APP=app.py flask run
+```
+
+* Open your browser at `http://localhost:5000`
+* Enter text, choose languages, and click **Translate**
+
+### 2. Streamlit Translator
+
+```bash
+streamlit run app2.py
+```
+
+* Use the sidebar to enable Dark Mode
+* Enter text, select **Mode** (Translate or Explain), and target language
+* Click **Translate** and view/copy the output
+
+---
+
+## 🧩 Technologies
+
+| Component          | Technology                        |
+| ------------------ | --------------------------------- |
+| Flask Web Server   | Flask, Flask-CORS                 |
+| Translation API    | googletrans (v4.0.0-rc1)          |
+| Streamlit Frontend | Streamlit, Pyperclip              |
+| Generative AI      | Google Generative AI (Gemini API) |
+| Environment        | python-dotenv                     |
+
+---
+
+## 🤝 Contributing
+
+* Fork this repository
+* Create a feature branch (`git checkout -b feature/XYZ`)
+* Commit your changes and push (`git push origin feature/XYZ`)
+* Open a Pull Request detailing your improvements.
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
    GOOGLE_API_KEY=<your_google_cloud_key>
    OPENAI_API_KEY=<your_openai_key>        # if using OpenAI endpoints
    ```
@@ -82,20 +144,4 @@ streamlit run app.py
 * Configure tone and dialect.
 * View translated output; enable TTS for audio playback.
 
----
 
-## 🛠️ Contributing
-
-1. Fork the repository and create a feature branch.
-2. Install dependencies and run tests where applicable.
-3. Submit a Pull Request with clear description of your changes.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
-
----
-
-*Enjoy seamless multilingual communication!*
