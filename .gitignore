@@ -1,2 +1,17 @@
 llm.ipynb
 __pycache__/Translator.cpython-312.pyc
+
+# Secrets
+.env
+*.env
+.streamlit/secrets.toml
+credentials.yml
+
+# Local data
+*.db
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
